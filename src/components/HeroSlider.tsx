@@ -48,7 +48,7 @@ const HeroSlider = () => {
   };
 
   return (
-    <div id="home" className="relative h-[70vh] md:h-[85vh] overflow-hidden">
+    <div id="home" className="relative h-[80vh] md:h-[90vh] overflow-hidden bg-black">
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -59,7 +59,8 @@ const HeroSlider = () => {
           <img
             src={slide.image}
             alt={slide.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
+            style={{ objectPosition: 'center center' }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
           <div className="absolute inset-0 flex items-center justify-center text-center px-4">

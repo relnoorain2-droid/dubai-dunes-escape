@@ -3,11 +3,34 @@ import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trackPurchase } from "@/lib/tracking";
 
 const BookingSuccess = () => {
   useEffect(() => {
-    // Here you could add logic to send confirmation email
-    // via Supabase edge function
+    // Fire conversion tracking using details persisted before payment
+    try {
+      const raw = localStorage.getItem('lastBooking');
+      if (raw) {
+        const { totalAmount, currency, packageName, guests } = JSON.parse(raw);
+        if (typeof totalAmount === 'number' && currency) {
+          trackPurchase(totalAmount, currency, { packageName, guests });
+        }
+        // Clear after use to avoid duplicate firing on refresh
+        localStorage.removeItem('lastBooking');
+      }
+    } catch {}
+
+    // Auto-open WhatsApp with a prefilled message upon booking success
+    const message = encodeURIComponent("Hi, I have completed my booking");
+    const whatsappUrl = `https://wa.me/971506638921?text=${message}`;
+
+    // Attempt to open in a new tab (may be blocked by popup blockers)
+    try {
+      window.open(whatsappUrl, '_blank');
+    } catch (e) {
+      // If blocked, user can click the visible button below
+      console.warn('WhatsApp auto-open may be blocked by the browser.');
+    }
   }, []);
 
   return (

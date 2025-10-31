@@ -64,7 +64,7 @@ const CancellationPolicy = () => {
                 <p>To cancel your desert safari booking, please contact us through:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>WhatsApp: +971 50 663 8921 (Recommended for fastest response)</li>
-                  <li>Email: info@premiumdesertsafari.ae</li>
+                  <li>Email: info@premium-desert-safari.com</li>
                 </ul>
                 <p>Please provide your booking reference number and the email address used for booking when requesting a cancellation.</p>
               </div>

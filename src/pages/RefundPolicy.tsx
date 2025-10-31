@@ -167,7 +167,7 @@ const RefundPolicy = () => {
               </p>
               <ul className="space-y-2 text-muted-foreground">
                 <li>• Contacting us via WhatsApp at +971 50 663 8921</li>
-                <li>• Emailing us at info@premiumdesertsafari.ae with your booking reference</li>
+                <li>• Emailing us at info@premium-desert-safari.com with your booking reference</li>
                 <li>• Checking your email for refund confirmation notifications</li>
               </ul>
             </section>

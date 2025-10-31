@@ -7,7 +7,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-16 md:py-24 bg-muted/30">
+    <section id="contact" className="py-16 md:py-24 bg-muted/30 scroll-mt-24">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -53,7 +53,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-2">Email</h3>
-                  <p className="text-muted-foreground">info@premiumdesertsafari.ae</p>
+                  <p className="text-muted-foreground">info@premium-desert-safari.com</p>
                 </div>
               </div>
 
@@ -63,7 +63,11 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-2">Location</h3>
-                  <p className="text-muted-foreground">Dubai, United Arab Emirates</p>
+                  <p className="text-muted-foreground">
+                    E-44 Hatta road,<br />
+                    Al Badayer<br />
+                    Madam
+                  </p>
                 </div>
               </div>
             </div>

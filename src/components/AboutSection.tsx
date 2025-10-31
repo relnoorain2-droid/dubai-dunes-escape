@@ -2,7 +2,7 @@ import { Star, Award, Users, Heart } from "lucide-react";
 
 const AboutSection = () => {
   return (
-    <section id="about" className="py-16 md:py-24 bg-background">
+    <section id="about" className="py-16 md:py-24 bg-background scroll-mt-24">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">

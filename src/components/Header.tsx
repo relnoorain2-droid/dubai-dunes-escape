@@ -1,9 +1,12 @@
-import { Menu, X } from "lucide-react";
+import { Menu, X, Zap } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.svg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -13,12 +16,17 @@ const Header = () => {
     }
   };
 
+  const goToWizard = () => {
+    navigate('/booking-wizard');
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-warm">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl md:text-3xl font-bold">
-            <span className="text-gradient-desert">Premium Desert Safari</span>
+          <div className="flex items-center">
+            <img src={logo} alt="Premium Desert Safari" className="h-10 md:h-12 w-auto" />
           </div>
 
           {/* Desktop Navigation */}
@@ -38,6 +46,10 @@ const Header = () => {
             <button onClick={() => scrollToSection('contact')} className="text-foreground hover:text-primary transition-colors">
               Contact
             </button>
+            <Button onClick={goToWizard} variant="outline" className="border-amber-400 text-amber-600 hover:bg-amber-50">
+              <Zap className="w-4 h-4 mr-2" />
+              Quick Book
+            </Button>
             <Button onClick={() => scrollToSection('booking')} className="bg-gradient-desert hover:opacity-90">
               Book Now
             </Button>
@@ -70,6 +82,10 @@ const Header = () => {
             <button onClick={() => scrollToSection('contact')} className="text-left py-2 text-foreground hover:text-primary transition-colors">
               Contact
             </button>
+            <Button onClick={goToWizard} variant="outline" className="border-amber-400 text-amber-600 hover:bg-amber-50 w-full mb-2">
+              <Zap className="w-4 h-4 mr-2" />
+              Quick Book Wizard
+            </Button>
             <Button onClick={() => scrollToSection('booking')} className="bg-gradient-desert hover:opacity-90 w-full">
               Book Now
             </Button>

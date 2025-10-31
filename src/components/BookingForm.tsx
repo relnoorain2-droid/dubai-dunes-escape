@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import desertBg from "@/assets/desert-camp-view.jpeg";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { SafariPackage } from "./PackageSelector";
 import { supabase } from "@/integrations/supabase/client";
-import { ShieldCheck, Lock, CreditCard, Plus, Minus, CalendarIcon } from "lucide-react";
+import { ShieldCheck, Lock, CreditCard, Plus, Minus, CalendarIcon, Users } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -14,9 +15,9 @@ import { cn } from "@/lib/utils";
 
 interface BookingFormProps {
   selectedPackage: SafariPackage | null;
+  selectedAddons?: { shisha: boolean; polaris: boolean };
 }
-
-const BookingForm = ({ selectedPackage }: BookingFormProps) => {
+const BookingForm = ({ selectedPackage, selectedAddons }: BookingFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -95,7 +96,7 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
           booking: bookingData,
           packageName: selectedPackage.name,
           customerEmail: formData.email,
-          businessEmail: 'bookings@desertsafari.com', // Replace with your business email
+          businessEmail: 'info@premium-desert-safari.com',
         },
       });
 
@@ -116,7 +117,10 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
 
   if (!selectedPackage) {
     return (
-      <section id="booking" className="py-16 md:py-24 bg-background">
+      <section
+        id="booking"
+        className="py-16 md:py-24 bg-background"
+      >
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             <span className="text-gradient-desert">Book Your Adventure</span>
@@ -130,7 +134,10 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
   }
 
   return (
-    <section id="booking" className="py-16 md:py-24 bg-background">
+    <section
+      id="booking"
+      className="py-16 md:py-24 bg-background"
+    >
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -142,12 +149,32 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
         </div>
 
         <Card className="p-6 md:p-8 shadow-warm">
-          <div className="mb-6 p-4 bg-muted rounded-lg">
-            <h3 className="font-bold text-xl mb-2">{selectedPackage.name}</h3>
-            <p className="text-2xl font-bold text-primary">
-              AED {selectedPackage.price} <span className="text-sm text-muted-foreground">per person</span>
-            </p>
-            <p className="text-sm mt-2">Pickup Time: {selectedPackage.pickupTime}</p>
+          <div className="mb-6 relative rounded-lg overflow-hidden">
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${desertBg})` }}
+            />
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="relative p-4">
+              <h3 className="font-bold text-xl mb-2 text-white drop-shadow-sm">{selectedPackage.name}</h3>
+              <p className="text-2xl font-bold text-primary drop-shadow-sm">
+                AED {selectedPackage.price} <span className="text-sm text-white/90">per person</span>
+              </p>
+              <p className="text-sm mt-2 text-white drop-shadow-sm">Pickup Time: {selectedPackage.pickupTime}</p>
+            </div>
+            {selectedAddons && (selectedAddons.shisha || selectedAddons.polaris) && (
+              <div className="mt-3 p-3 bg-secondary/20 border border-secondary/30 rounded-md text-sm">
+                <span className="font-semibold">Selected add-ons:</span>
+                <span className="ml-2">
+                  {[
+                    selectedAddons.shisha ? 'Shisha at table' : null,
+                    selectedAddons.polaris ? '200cc Polaris ride' : null,
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
+                </span>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -241,6 +268,17 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
+              {formData.numberOfGuests >= 6 ? (
+                <div className="mt-3 p-3 bg-primary/10 border border-primary/30 rounded flex items-center gap-2 animate-fade-in">
+                  <ShieldCheck className="text-primary" size={18} />
+                  <span className="text-sm font-medium text-primary">Private transfer is provided for groups of 6 or more.</span>
+                </div>
+              ) : (
+                <div className="mt-3 p-3 bg-secondary/10 border border-secondary/30 rounded flex items-center gap-2">
+                  <Users className="text-secondary" size={18} />
+                  <span className="text-sm">Solo travelers can enjoy our sharing transfer.</span>
+                </div>
+              )}
             </div>
 
             <div className="pt-4 border-t">

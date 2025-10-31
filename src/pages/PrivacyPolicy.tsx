@@ -70,7 +70,7 @@ const PrivacyPolicy = () => {
             <section>
               <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
               <p className="text-muted-foreground">
-                If you have any questions about our Privacy Policy or how we handle your personal information, please contact us via WhatsApp at +971 50 663 8921 or email us at info@premiumdesertsafari.ae
+                If you have any questions about our Privacy Policy or how we handle your personal information, please contact us via WhatsApp at +971 50 663 8921 or email us at info@premium-desert-safari.com
               </p>
             </section>
 
