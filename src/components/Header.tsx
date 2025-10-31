@@ -2,7 +2,7 @@ import { Menu, X, Zap } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.svg";
+import BrandLogo from "@/components/BrandLogo";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,13 +26,7 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <img
-              src={logo}
-              alt="Premium Desert Safari"
-              className="h-8 sm:h-9 md:h-10 lg:h-12 w-auto"
-              loading="eager"
-              decoding="async"
-            />
+            <BrandLogo className="h-8 sm:h-9 md:h-10 lg:h-12" />
           </div>
 
           {/* Desktop Navigation */}

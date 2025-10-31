@@ -1,6 +1,6 @@
 import { MessageCircle, ShieldCheck, Lock, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.svg";
+import BrandLogo from "@/components/BrandLogo";
 
 const Footer = () => {
   const handleWhatsAppClick = () => {
@@ -21,13 +21,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="mb-4">
-              <img
-                src={logo}
-                alt="Premium Desert Safari"
-                className="h-10 md:h-12 lg:h-14 w-auto"
-                loading="lazy"
-                decoding="async"
-              />
+              <BrandLogo className="h-10 md:h-12 lg:h-14" />
             </div>
             <p className="text-muted-foreground mb-4">
               Experience the ultimate Arabian adventure with our premium desert safari packages in Dubai.
