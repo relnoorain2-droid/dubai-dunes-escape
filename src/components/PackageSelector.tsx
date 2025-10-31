@@ -1,6 +1,8 @@
-import { Check, Clock, Users } from "lucide-react";
+import { useState } from "react";
+import { Check, Clock, Users, ShieldCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export interface SafariPackage {
   id: string;
@@ -26,7 +28,12 @@ const packages: SafariPackage[] = [
       "Sunset views with photographic opportunity",
       "1 short Camel ride",
       "Henna tattooing",
-      "Entertainment shows: Belly dance, Soft music (DJ), Sufi dance, Khaliji show, Dabka + Drummers show, Fire show",
+      "Belly dance",
+      "Soft music (DJ)",
+      "Sufi dance",
+      "Khaliji show",
+      "Dabka + Drummers show",
+      "Fire show",
       "Live Cooking stations and relaxed sitting area",
       "Traditional BBQ dinner with vegetarian and non-vegetarian cuisines (At reserved area)"
     ],
@@ -41,7 +48,6 @@ const packages: SafariPackage[] = [
     price: 245,
     pickupTime: "3:00 PM - 3:30 PM",
     duration: "06:00 hours",
-    highlighted: true,
     inclusions: [
       "Two way Hotel to hotel drop back",
       "Exploration of dunes in a 4x4 vehicle (25-30 minutes)",
@@ -49,7 +55,12 @@ const packages: SafariPackage[] = [
       "1 short Camel ride",
       "Henna tattooing",
       "Shisha smoking at the table",
-      "Entertainment shows: Belly dance, Soft music (DJ), Sufi dance, Khaliji show, Dabka + Drummers show, Fire show",
+      "Belly dance",
+      "Soft music (DJ)",
+      "Sufi dance show",
+      "Khaliji show",
+      "Dabka + Drummers show",
+      "Fire show",
       "Live Cooking stations and relaxed sitting area",
       "Traditional BBQ dinner with vegetarian and non-vegetarian cuisines (At reserved area)"
     ],
@@ -64,6 +75,7 @@ const packages: SafariPackage[] = [
     price: 265,
     pickupTime: "2:00 PM - 2:30 PM",
     duration: "06:00 hours",
+    highlighted: true,
     inclusions: [
       "Two way Hotel to hotel drop back",
       "Exploration of dunes in a 4x4 vehicle (25-30 minutes)",
@@ -73,7 +85,12 @@ const packages: SafariPackage[] = [
       "Live Cooking stations and relaxed sitting area",
       "Traditional BBQ dinner with vegetarian and non-vegetarian cuisines (At reserved area)",
       "Shisha smoking facility at the shisha corner",
-      "Entertainment shows",
+      "Belly dance",
+      "Soft music (DJ)",
+      "Sufi dance",
+      "Khaliji show",
+      "Dabka + Drummers show",
+      "Fire show",
       "Unlimited refreshments",
       "20 min ride for Polaris 200cc - inside the circle"
     ],
@@ -97,7 +114,12 @@ const packages: SafariPackage[] = [
       "Henna tattooing",
       "Shisha smoking facility at the shisha corner",
       "Unlimited refreshments",
-      "Entertainment shows: Belly dance, Soft music (DJ), Sufi dance, Khaliji show, Dabka + Drummers show, Fire show",
+      "Belly dance",
+      "Soft music (DJ)",
+      "Sufi dance show",
+      "Khaliji show",
+      "Dabka + Drummers show",
+      "Fire show",
       "Live Cooking stations and relaxed sitting area",
       "Traditional BBQ dinner with vegetarian and non-vegetarian cuisines (At reserved area)"
     ],
@@ -112,6 +134,8 @@ interface PackageSelectorProps {
 }
 
 const PackageSelector = ({ onSelectPackage }: PackageSelectorProps) => {
+  const [selectedInclusion, setSelectedInclusion] = useState<string | null>(null);
+
   return (
     <section id="packages" className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -134,7 +158,7 @@ const PackageSelector = ({ onSelectPackage }: PackageSelectorProps) => {
             >
               {pkg.highlighted && (
                 <div className="absolute top-0 right-0 bg-gradient-desert text-white px-4 py-1 text-sm font-semibold">
-                  Most Popular
+                  🏆 Best Choice - Most Popular
                 </div>
               )}
 
@@ -163,10 +187,26 @@ const PackageSelector = ({ onSelectPackage }: PackageSelectorProps) => {
                     {pkg.inclusions.map((item, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm">
                         <Check className="text-primary flex-shrink-0 mt-0.5" size={16} />
-                        <span>{item}</span>
+                        <span 
+                          className="cursor-pointer hover:text-primary hover:underline transition-colors"
+                          onClick={() => setSelectedInclusion(item)}
+                        >
+                          {item}
+                        </span>
                       </li>
                     ))}
                   </ul>
+                </div>
+
+                {/* Cancellation Policy Box */}
+                <div className="mb-6 p-4 bg-muted/50 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ShieldCheck className="text-primary" size={20} />
+                    <h4 className="font-semibold text-primary">Cancellation Policy</h4>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Free cancellation up to 24 hours before tour departure time. 100% charges apply for cancellations within 24 hours.
+                  </p>
                 </div>
 
                 <Button
@@ -198,6 +238,25 @@ const PackageSelector = ({ onSelectPackage }: PackageSelectorProps) => {
             </li>
           </ul>
         </div>
+
+        {/* Image Dialog */}
+        <Dialog open={!!selectedInclusion} onOpenChange={() => setSelectedInclusion(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{selectedInclusion}</DialogTitle>
+            </DialogHeader>
+            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+              <img 
+                src="/placeholder.svg" 
+                alt={selectedInclusion || "Activity"} 
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Experience the best of Arabian desert adventures
+            </p>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );

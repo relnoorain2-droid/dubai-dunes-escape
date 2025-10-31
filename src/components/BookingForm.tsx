@@ -6,7 +6,11 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { SafariPackage } from "./PackageSelector";
 import { supabase } from "@/integrations/supabase/client";
-import { ShieldCheck, Lock, CreditCard } from "lucide-react";
+import { ShieldCheck, Lock, CreditCard, Plus, Minus, CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface BookingFormProps {
   selectedPackage: SafariPackage | null;
@@ -20,6 +24,7 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
     mobile: "",
     email: "",
     numberOfGuests: 1,
+    travelDate: undefined as Date | undefined,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,31 +42,46 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
     setIsLoading(true);
 
     try {
+      if (!formData.travelDate) {
+        toast({
+          title: "Please select a travel date",
+          description: "Choose your preferred travel date to continue",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const totalAmount = selectedPackage.price * formData.numberOfGuests;
 
-      // Create payment intent with Ziina
-      const paymentResponse = await fetch('https://api.ziina.com/v1/payment_intents', {
+      // Create payment intent with Ziina using correct API
+      const paymentResponse = await fetch('https://api-v2.ziina.com/api/payment_intent', {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ACFplIm28AkdUUD2L7IoZhPJKVNcYj7Ih2tezeRib+E4wWdBMo9P9mKPxahv9M8F',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: Math.round(totalAmount * 100), // Convert to fils
+          amount: Math.round(totalAmount * 100), // Convert to fils (AED * 100)
+          currency_code: 'AED',
+          message: `Premium Desert Safari - ${selectedPackage.name}`,
           success_url: window.location.origin + '/booking-success',
           cancel_url: window.location.origin + '/?booking=cancelled',
+          failure_url: window.location.origin + '/?booking=failed',
           test: true, // Set to false for production
+          allow_tips: false,
         }),
       });
 
       if (!paymentResponse.ok) {
+        const errorData = await paymentResponse.json();
+        console.error('Ziina API Error:', errorData);
         throw new Error('Payment initialization failed');
       }
 
       const paymentData = await paymentResponse.json();
 
       // Save booking to database
-      const { error: dbError } = await supabase
+      const { data: bookingData, error: dbError } = await supabase
         .from('bookings')
         .insert({
           full_name: formData.fullName,
@@ -73,9 +93,22 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
           total_amount: totalAmount,
           pickup_time: selectedPackage.pickupTime,
           payment_intent_id: paymentData.id,
-        });
+          booking_date: format(formData.travelDate, 'yyyy-MM-dd'),
+        })
+        .select()
+        .single();
 
       if (dbError) throw dbError;
+
+      // Send confirmation emails
+      await supabase.functions.invoke('send-booking-confirmation', {
+        body: {
+          booking: bookingData,
+          packageName: selectedPackage.name,
+          customerEmail: formData.email,
+          businessEmail: 'bookings@desertsafari.com', // Replace with your business email
+        },
+      });
 
       // Redirect to payment page
       window.location.href = paymentData.redirect_url;
@@ -165,15 +198,60 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
             </div>
 
             <div>
+              <Label htmlFor="travelDate">Travel Date *</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.travelDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.travelDate ? format(formData.travelDate, "PPP") : "Select travel date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.travelDate}
+                    onSelect={(date) => setFormData({ ...formData, travelDate: date })}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div>
               <Label htmlFor="guests">Number of Guests *</Label>
-              <Input
-                id="guests"
-                type="number"
-                min="1"
-                required
-                value={formData.numberOfGuests}
-                onChange={(e) => setFormData({ ...formData, numberOfGuests: parseInt(e.target.value) })}
-              />
+              <div className="flex items-center gap-4 mt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setFormData({ ...formData, numberOfGuests: Math.max(1, formData.numberOfGuests - 1) })}
+                  disabled={formData.numberOfGuests <= 1}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <div className="flex-1 text-center">
+                  <span className="text-2xl font-bold">{formData.numberOfGuests}</span>
+                  <span className="text-sm text-muted-foreground ml-2">
+                    {formData.numberOfGuests === 1 ? "Guest" : "Guests"}
+                  </span>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setFormData({ ...formData, numberOfGuests: formData.numberOfGuests + 1 })}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             <div className="pt-4 border-t">
