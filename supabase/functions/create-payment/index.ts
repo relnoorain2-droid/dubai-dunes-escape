@@ -14,8 +14,32 @@ serve(async (req) => {
   try {
     const { amount, packageName, successUrl, cancelUrl, failureUrl } = await req.json();
 
+    const apiKey = Deno.env.get('ZIINA_API_KEY');
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({ error: 'Missing ZIINA_API_KEY' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
+
+    // Validate and normalize inputs
+    const amountAed = Number(amount);
+    if (!Number.isFinite(amountAed) || amountAed <= 0) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid amount' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    const amountFils = Math.max(200, Math.round(amountAed * 100)); // min 2 AED
+
+    // Short, safe message to satisfy Ziina constraints
+    const baseMsg = `Desert Safari - ${String(packageName || '').slice(0, 30)}`.trim();
+    const message = baseMsg.length < 3 ? 'Desert Safari' : baseMsg;
+
+    const operation_id = crypto.randomUUID();
+
     console.log('Creating Ziina payment intent...', { 
-      amount, 
+      amount: amountAed, 
       packageName 
     });
 
@@ -23,18 +47,19 @@ serve(async (req) => {
     const paymentResponse = await fetch('https://api-v2.ziina.com/api/payment_intent', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ACFplIm28AkdUUD2L7IoZhPJKVNcYj7Ih2tezeRib+E4wWdBMo9P9mKPxahv9M8F',
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        amount: Math.round(amount * 100), // Convert to fils (AED * 100)
+        amount: amountFils,
         currency_code: 'AED',
-        message: `Premium Desert Safari - ${packageName}`,
+        message,
         success_url: successUrl,
         cancel_url: cancelUrl,
         failure_url: failureUrl,
         test: true, // Set to false for production
         allow_tips: false,
+        operation_id,
       }),
     });
 
