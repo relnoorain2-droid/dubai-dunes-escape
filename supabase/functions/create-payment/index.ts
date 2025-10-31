@@ -32,9 +32,11 @@ serve(async (req) => {
     }
     const amountFils = Math.max(200, Math.round(amountAed * 100)); // min 2 AED
 
-    // Short, safe message to satisfy Ziina constraints
-    const baseMsg = `Desert Safari - ${String(packageName || '').slice(0, 30)}`.trim();
-    const message = baseMsg.length < 3 ? 'Desert Safari' : baseMsg;
+    // Use the full package name for the checkout title
+    // Ziina supports a reasonably long message; keep a conservative cap to avoid server-side truncation
+    const desiredName = String(packageName || '').trim();
+    const safeName = desiredName || 'Premium Desert Safari';
+    const message = safeName.slice(0, 120); // keep full name like "Premium Desert Safari with VIP Majlis"
 
     const operation_id = crypto.randomUUID();
 
