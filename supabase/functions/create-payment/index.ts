@@ -42,7 +42,8 @@ serve(async (req) => {
 
     console.log('Creating Ziina payment intent...', { 
       amount: amountAed, 
-      packageName 
+      packageName,
+      message
     });
 
     // Create payment intent with Ziina
