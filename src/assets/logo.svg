@@ -1,12 +1,28 @@
-<svg width="200" height="48" viewBox="0 0 200 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dubai Dunes Escape">
-  <!-- GetYourGuide-style: clean rounded rectangle + bold wordmark -->
-  <rect width="200" height="48" rx="8" fill="#FF6A00"/>
+<svg width="300" height="150" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Premium Desert Safari logo">
+  <!-- Transparent background; stacked wordmark inspired by provided artwork -->
+  <defs>
+    <style>
+      .word { font-family: Inter, Arial, sans-serif; font-weight: 900; fill: #E96C2C; }
+    </style>
+  </defs>
 
-  <!-- Wordmark (uppercase, bold, tight tracking) -->
-  <text x="16" y="22" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" letter-spacing="0.5">
-    DUBAI DUNES
-  </text>
-  <text x="16" y="40" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" letter-spacing="0.5">
-    ESCAPE
-  </text>
+  <!-- PREMIUM -->
+  <text class="word" x="16" y="45" font-size="42" letter-spacing="1">PREMIUM</text>
+  <!-- decorative dots over P and I -->
+  <circle cx="24" cy="20" r="5" fill="#E96C2C"/>
+  <circle cx="192" cy="20" r="5" fill="#E96C2C"/>
+  <!-- small crown-like zigzag near middle -->
+  <path d="M120 50 l6 -8 l6 8 l6 -8 l6 8" fill="none" stroke="#E96C2C" stroke-width="6" stroke-linejoin="round"/>
+
+  <!-- DESERT -->
+  <text class="word" x="16" y="95" font-size="42" letter-spacing="1">DESERT</text>
+  <!-- wavy bar accent between S and E -->
+  <path d="M165 65 c4 6 4 12 0 18 c-4 6 -4 12 0 18" fill="none" stroke="#E96C2C" stroke-width="12" stroke-linecap="round"/>
+  <!-- crown accent near last T -->
+  <path d="M250 60 l6 -8 l6 8 l6 -8 l6 8" fill="none" stroke="#E96C2C" stroke-width="6" stroke-linejoin="round"/>
+
+  <!-- SAFARI -->
+  <text class="word" x="16" y="145" font-size="42" letter-spacing="1">SAFARI</text>
+  <!-- subtle baseline wave under A for desert vibe -->
+  <path d="M100 122 q10 8 20 0 q10 -8 20 0 q10 8 20 0" fill="none" stroke="#E96C2C" stroke-width="6" stroke-linecap="round"/>
 </svg>
