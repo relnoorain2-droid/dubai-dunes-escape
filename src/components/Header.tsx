@@ -26,7 +26,13 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <img src={logo} alt="Premium Desert Safari" className="h-10 md:h-12 w-auto" />
+            <img
+              src={logo}
+              alt="Premium Desert Safari"
+              className="h-8 sm:h-9 md:h-10 lg:h-12 w-auto"
+              loading="eager"
+              decoding="async"
+            />
           </div>
 
           {/* Desktop Navigation */}
