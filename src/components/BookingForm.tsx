@@ -53,32 +53,21 @@ const BookingForm = ({ selectedPackage }: BookingFormProps) => {
 
       const totalAmount = selectedPackage.price * formData.numberOfGuests;
 
-      // Create payment intent with Ziina using correct API
-      const paymentResponse = await fetch('https://api-v2.ziina.com/api/payment_intent', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ACFplIm28AkdUUD2L7IoZhPJKVNcYj7Ih2tezeRib+E4wWdBMo9P9mKPxahv9M8F',
-          'Content-Type': 'application/json',
+      // Create payment intent via edge function
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('create-payment', {
+        body: {
+          amount: totalAmount,
+          packageName: selectedPackage.name,
+          successUrl: window.location.origin + '/booking-success',
+          cancelUrl: window.location.origin + '/?booking=cancelled',
+          failureUrl: window.location.origin + '/?booking=failed',
         },
-        body: JSON.stringify({
-          amount: Math.round(totalAmount * 100), // Convert to fils (AED * 100)
-          currency_code: 'AED',
-          message: `Premium Desert Safari - ${selectedPackage.name}`,
-          success_url: window.location.origin + '/booking-success',
-          cancel_url: window.location.origin + '/?booking=cancelled',
-          failure_url: window.location.origin + '/?booking=failed',
-          test: true, // Set to false for production
-          allow_tips: false,
-        }),
       });
 
-      if (!paymentResponse.ok) {
-        const errorData = await paymentResponse.json();
-        console.error('Ziina API Error:', errorData);
-        throw new Error('Payment initialization failed');
+      if (paymentError || !paymentData) {
+        console.error('Payment creation error:', paymentError);
+        throw new Error(paymentError?.message || 'Payment initialization failed');
       }
-
-      const paymentData = await paymentResponse.json();
 
       // Save booking to database
       const { data: bookingData, error: dbError } = await supabase
