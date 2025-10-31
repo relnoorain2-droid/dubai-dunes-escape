@@ -8,18 +8,18 @@ type Props = {
 
 const BrandLogo = ({ className, alt = "Premium Desert Safari" }: Props) => {
   return (
-    <picture>
-      {/* If /premium-logo.png exists in public/, the browser will use it; otherwise falls back to SVG */}
-      <source srcSet="/premium-logo.png" type="image/png" />
-      <img
-        src={logoSvg}
-        alt={alt}
-        className={clsx("object-contain w-auto", className)}
-        loading="eager"
-        decoding="async"
-        style={{ display: "block" }}
-      />
-    </picture>
+    <img
+      src="/premium-logo.png"
+      onError={(e) => {
+        // If PNG is missing or fails, fall back to bundled SVG
+        e.currentTarget.src = logoSvg;
+      }}
+      alt={alt}
+      className={clsx("object-contain w-auto", className)}
+      loading="eager"
+      decoding="async"
+      style={{ display: "block" }}
+    />
   );
 };
 
