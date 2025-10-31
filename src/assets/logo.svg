@@ -1,19 +1,12 @@
-<svg width="200" height="48" viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background rounded rectangle similar to GetYourGuide -->
-  <rect width="200" height="48" rx="8" fill="#F97316"/>
-  
-  <!-- Desert dune silhouette -->
-  <path d="M8 32C12 28 16 30 20 32C24 34 28 30 32 32C36 34 40 30 44 32C48 34 52 30 56 32C60 34 64 30 68 32C72 34 76 30 80 32C84 34 88 30 92 32C96 34 100 30 104 32C108 34 112 30 116 32C120 34 124 30 128 32C132 34 136 30 140 32C144 34 148 30 152 32C156 34 160 30 164 32C168 34 172 30 176 32C180 34 184 30 188 32C190 33 192 32 192 32V40H8V32Z" fill="#EA580C"/>
-  
-  <!-- Sun/moon circle -->
-  <circle cx="24" cy="20" r="6" fill="#FED7AA"/>
-  
-  <!-- Company name text -->
-  <text x="44" y="18" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">PREMIUM</text>
-  <text x="44" y="32" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">DESERT SAFARI</text>
-  
-  <!-- Small decorative stars -->
-  <circle cx="160" cy="14" r="1.5" fill="#FED7AA"/>
-  <circle cx="170" cy="18" r="1" fill="#FED7AA"/>
-  <circle cx="180" cy="12" r="1.2" fill="#FED7AA"/>
+<svg width="200" height="48" viewBox="0 0 200 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dubai Dunes Escape">
+  <!-- GetYourGuide-style: clean rounded rectangle + bold wordmark -->
+  <rect width="200" height="48" rx="8" fill="#FF6A00"/>
+
+  <!-- Wordmark (uppercase, bold, tight tracking) -->
+  <text x="16" y="22" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" letter-spacing="0.5">
+    DUBAI DUNES
+  </text>
+  <text x="16" y="40" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" letter-spacing="0.5">
+    ESCAPE
+  </text>
 </svg>
