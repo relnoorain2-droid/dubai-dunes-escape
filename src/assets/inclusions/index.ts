@@ -25,8 +25,9 @@ const dynamicImages: Record<string, string> = (() => {
     const map: Record<string, string> = {};
     Object.entries(modules).forEach(([path, url]) => {
       const file = path.split('/').pop() || path;
-      const name = file.replace(/\.(png|jpg|jpeg|webp)$/i, '').toLowerCase();
-      map[name] = url as unknown as string;
+      const raw = file.replace(/\.(png|jpg|jpeg|webp)$/i, '');
+      const slug = toSlug(raw);
+      map[slug] = url as unknown as string;
     });
     return map;
   } catch {
@@ -81,6 +82,15 @@ function toSlug(text: string): string {
     .replace(/-+/g, '-');
 }
 
+// Normalize slugs by removing common suffixes like "view", numeric tails, and quality hints
+function normalizeSlug(text: string): string {
+  let s = toSlug(text)
+    .replace(/-(view|image|photo|pic|pictures|hd|hq)$/g, '')
+    .replace(/-\d+$/g, '')
+    .replace(/-(\d{2})$/g, '');
+  return s;
+}
+
 function keywordFallback(inclusion: string): string {
   const text = inclusion.toLowerCase();
   if (text.includes("camel")) return camelRide;
@@ -110,6 +120,14 @@ export function getInclusionImage(inclusion: string | null): string {
   // Try user-provided dynamic images first (filenames matching normalized inclusion text)
   const slug = toSlug(inclusion);
   if (dynamicImages[slug]) return dynamicImages[slug];
+  // Fuzzy match: compare normalized slugs against dynamic image keys
+  const nslug = normalizeSlug(inclusion);
+  for (const key of Object.keys(dynamicImages)) {
+    const nkey = normalizeSlug(key);
+    if (nkey === nslug || nkey.includes(nslug) || nslug.includes(nkey)) {
+      return dynamicImages[key];
+    }
+  }
   // Try explicit mapping next
   const mapped = INCLUSION_IMAGES[inclusion];
   if (mapped) return mapped;
