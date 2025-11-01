@@ -30,6 +30,7 @@ interface WizardState {
   fullName: string;
   mobile: string;
   email: string;
+  pickupLocation?: string;
   numberOfGuests: number;
   travelDate?: Date;
   selectedPackage: any;
@@ -46,6 +47,7 @@ const BookingWizard = () => {
     fullName: "",
     mobile: "",
     email: "",
+    pickupLocation: "",
     numberOfGuests: 1,
     travelDate: undefined,
     selectedPackage: null,
@@ -113,6 +115,10 @@ const BookingWizard = () => {
       toast({ title: "Add contact info", description: "Mobile and email are required at checkout", variant: "destructive" });
       return;
     }
+    if (!wizardState.pickupLocation) {
+      toast({ title: "Add pickup location", description: "Please provide your pickup location for transfer", variant: "destructive" });
+      return;
+    }
     try {
       updateWizardState({ isSubmitting: true });
       const totalAmount = wizardState.selectedPackage.price * wizardState.numberOfGuests;
@@ -169,6 +175,38 @@ const BookingWizard = () => {
           guests: wizardState.numberOfGuests,
         };
         localStorage.setItem('lastBooking', JSON.stringify(payload));
+        // Persist invoice data for post-payment invoice generation
+        const invoicePayload = {
+          invoiceNumber: `INV-${Date.now()}`,
+          invoiceDate: new Date().toISOString(),
+          customerName: wizardState.fullName,
+          mobile: wizardState.mobile,
+          email: wizardState.email,
+          pickupLocation: wizardState.pickupLocation,
+          guests: wizardState.numberOfGuests,
+          package: {
+            id: wizardState.selectedPackage.id,
+            name: wizardState.selectedPackage.name,
+            pricePerPerson: wizardState.selectedPackage.price,
+            inclusions: wizardState.selectedPackage.inclusions,
+            pickupTime: wizardState.selectedPackage.pickupTime,
+            duration: wizardState.selectedPackage.duration,
+          },
+          amounts: {
+            subtotal: wizardState.selectedPackage.price * wizardState.numberOfGuests,
+            taxes: 0,
+            fees: 0,
+            total: wizardState.selectedPackage.price * wizardState.numberOfGuests,
+            currency: 'AED',
+          },
+          business: {
+            name: 'Premium Desert Safari Dubai',
+            contact: '+971 50 663 8921',
+            email: 'info@premium-desert-safari.com',
+            website: window.location.origin,
+          }
+        };
+        localStorage.setItem('invoiceData', JSON.stringify(invoicePayload));
       } catch {}
 
       window.location.href = paymentData.redirect_url;
@@ -471,6 +509,16 @@ const BookingWizard = () => {
                 value={wizardState.email}
                 onChange={(e) => updateWizardState({ email: e.target.value })}
               />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium">Pickup Location *</label>
+              <input
+                className="mt-2 w-full border rounded px-3 py-2"
+                placeholder="Type your pickup point (Hotel/Residence/Location)"
+                value={wizardState.pickupLocation || ''}
+                onChange={(e) => updateWizardState({ pickupLocation: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Be ready 10 minutes before the scheduled pickup time.</p>
             </div>
           </div>
           <Separator />

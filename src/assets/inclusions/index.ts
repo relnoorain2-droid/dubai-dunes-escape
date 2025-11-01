@@ -17,6 +17,23 @@ import quadBikeGirl from "@/assets/quad-bike-girl.jpeg";
 import quadBikeGirl2 from "@/assets/quad-bike-girl-2.jpeg";
 import arabicCouple from "@/assets/arabic-couple.jpeg";
 
+// Dynamically import any user-provided inclusion images
+// Filenames should match the inclusion text (normalized to kebab-case)
+const dynamicImages: Record<string, string> = (() => {
+  try {
+    const modules = import.meta.glob("@/assets/inclusions/*.{png,jpg,jpeg,webp}", { eager: true, import: 'default' }) as Record<string, string>;
+    const map: Record<string, string> = {};
+    Object.entries(modules).forEach(([path, url]) => {
+      const file = path.split('/').pop() || path;
+      const name = file.replace(/\.(png|jpg|jpeg|webp)$/i, '').toLowerCase();
+      map[name] = url as unknown as string;
+    });
+    return map;
+  } catch {
+    return {};
+  }
+})();
+
 // Fallback when no image is available
 const placeholder = "/placeholder.svg";
 
@@ -55,6 +72,15 @@ export const INCLUSION_IMAGES: Record<string, string> = {
   "Sufi dance show": tanouraDance,
 };
 
+function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
 function keywordFallback(inclusion: string): string {
   const text = inclusion.toLowerCase();
   if (text.includes("camel")) return camelRide;
@@ -81,7 +107,10 @@ function keywordFallback(inclusion: string): string {
 
 export function getInclusionImage(inclusion: string | null): string {
   if (!inclusion) return placeholder;
-  // Try explicit mapping first
+  // Try user-provided dynamic images first (filenames matching normalized inclusion text)
+  const slug = toSlug(inclusion);
+  if (dynamicImages[slug]) return dynamicImages[slug];
+  // Try explicit mapping next
   const mapped = INCLUSION_IMAGES[inclusion];
   if (mapped) return mapped;
   // Fallback to keyword-based inference

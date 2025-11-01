@@ -1,6 +1,7 @@
 import { MessageCircle, ShieldCheck, Lock, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BrandLogo from "@/components/BrandLogo";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const handleWhatsAppClick = () => {
@@ -64,19 +65,19 @@ const Footer = () => {
             <h4 className="font-bold text-lg mb-4">Policies</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/cancellation-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/cancellation-policy" className="text-muted-foreground hover:text-primary transition-colors">
                   Cancellation Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/refund-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/refund-policy" className="text-muted-foreground hover:text-primary transition-colors">
                   Refund Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

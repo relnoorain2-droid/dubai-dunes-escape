@@ -50,7 +50,7 @@ const Header = () => {
               <Zap className="w-4 h-4 mr-2" />
               Quick Book
             </Button>
-            <Button onClick={() => scrollToSection('booking')} className="bg-gradient-desert hover:opacity-90">
+            <Button onClick={() => scrollToSection('packages')} className="bg-gradient-desert hover:opacity-90">
               Book Now
             </Button>
           </div>
@@ -86,7 +86,7 @@ const Header = () => {
               <Zap className="w-4 h-4 mr-2" />
               Quick Book Wizard
             </Button>
-            <Button onClick={() => scrollToSection('booking')} className="bg-gradient-desert hover:opacity-90 w-full">
+            <Button onClick={() => scrollToSection('packages')} className="bg-gradient-desert hover:opacity-90 w-full">
               Book Now
             </Button>
           </div>

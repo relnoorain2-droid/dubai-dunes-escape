@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import HeroSlider from "@/components/HeroSlider";
 import PackageSelector from "@/components/PackageSelector";
 import BookingForm from "@/components/BookingForm";
 import Gallery from "@/components/Gallery";
 import VideoSection from "@/components/VideoSection";
+import Reviews from "@/components/Reviews";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -46,10 +47,22 @@ const Index = () => {
       <Header />
       <main className="flex-1">
         <HeroSlider />
+        {/* Instant Booking button section */}
+        <section className="container mx-auto px-4 mt-6 mb-4">
+          <div className="flex justify-center">
+            <Link
+              to="/booking-wizard"
+              className="inline-flex items-center px-8 py-4 rounded-lg bg-gradient-desert text-white shadow-warm hover:opacity-90 text-lg"
+            >
+              Instant Booking Tour
+            </Link>
+          </div>
+        </section>
         <PackageSelector onSelectPackage={handleSelectPackage} preselectIndex={preselectIndex} preselectId={preselectId} />
         <BookingForm selectedPackage={selectedPackage} selectedAddons={selectedAddons} />
         <Gallery />
         <VideoSection />
+        <Reviews />
         <AboutSection />
         <ContactSection />
       </main>

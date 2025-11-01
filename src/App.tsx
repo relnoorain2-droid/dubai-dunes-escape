@@ -10,6 +10,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookingWizard from "./pages/BookingWizard";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/booking-wizard" element={<BookingWizard />} />

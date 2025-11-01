@@ -1,11 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { trackPurchase } from "@/lib/tracking";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
+interface InvoiceData {
+  invoiceNumber: string;
+  invoiceDate: string;
+  customerName: string;
+  mobile: string;
+  email: string;
+  pickupLocation?: string;
+  guests: number;
+  package: {
+    id: string;
+    name: string;
+    pricePerPerson: number;
+    inclusions: string[];
+    pickupTime?: string;
+    duration?: string;
+  };
+  amounts: { subtotal: number; taxes: number; fees: number; total: number; currency: string };
+  business: { name: string; contact: string; email: string; website: string };
+}
 
 const BookingSuccess = () => {
+  const [invoice, setInvoice] = useState<InvoiceData | null>(null);
+  const invoiceRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     // Fire conversion tracking using details persisted before payment
     try {
@@ -31,6 +55,34 @@ const BookingSuccess = () => {
       // If blocked, user can click the visible button below
       console.warn('WhatsApp auto-open may be blocked by the browser.');
     }
+
+    // Load invoice data and auto-generate PDF download
+    try {
+      const invRaw = localStorage.getItem('invoiceData');
+      if (invRaw) {
+        const data: InvoiceData = JSON.parse(invRaw);
+        setInvoice(data);
+        // Delay to let invoice render
+        setTimeout(async () => {
+          if (invoiceRef.current) {
+            const canvas = await html2canvas(invoiceRef.current, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            // Fit image into page keeping aspect ratio
+            const imgWidth = pageWidth - 40; // margins
+            const ratio = canvas.width / canvas.height;
+            const imgHeight = imgWidth / ratio;
+            const top = 20 + (pageHeight - imgHeight) / 2 - 20;
+            pdf.addImage(imgData, 'PNG', 20, Math.max(20, top), imgWidth, imgHeight);
+            pdf.save(`Invoice_${data.invoiceNumber}.pdf`);
+            // Clear after generating
+            localStorage.removeItem('invoiceData');
+          }
+        }, 300);
+      }
+    } catch {}
   }, []);
 
   return (
@@ -95,6 +147,68 @@ const BookingSuccess = () => {
           <p className="text-sm text-muted-foreground mt-8">
             Need help? Contact us anytime at +971 50 663 8921
           </p>
+          {/* Hidden invoice layout for PDF generation */}
+          {invoice && (
+            <div ref={invoiceRef} style={{ position: 'absolute', left: -9999, top: -9999, width: 800 }}>
+              <div className="p-6 rounded-lg border border-border bg-white shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold">Premium Desert Safari Dubai</h2>
+                    <p className="text-sm text-muted-foreground">{invoice.business.contact} • {invoice.business.email}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold">Invoice</p>
+                    <p className="text-sm">{new Date(invoice.invoiceDate).toLocaleDateString()} • {invoice.invoiceNumber}</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-semibold">Customer</p>
+                    <p className="text-sm">{invoice.customerName}</p>
+                    <p className="text-sm">Guests: {invoice.guests}</p>
+                    {invoice.pickupLocation && <p className="text-sm">Pickup: {invoice.pickupLocation}</p>}
+                  </div>
+                  <div>
+                    <p className="font-semibold">Package</p>
+                    <p className="text-sm">{invoice.package.name}</p>
+                    {invoice.package.pickupTime && <p className="text-sm">Pickup Time: {invoice.package.pickupTime}</p>}
+                    {invoice.package.duration && <p className="text-sm">Duration: {invoice.package.duration}</p>}
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="font-semibold mb-2">Inclusions</p>
+                  <ul className="list-disc pl-6 text-sm">
+                    {invoice.package.inclusions.map((inc, i) => (
+                      <li key={i}>{inc}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-4 border-t pt-4">
+                  <div className="flex justify-between text-sm">
+                    <span>Subtotal</span>
+                    <span>{invoice.amounts.currency} {invoice.amounts.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Taxes</span>
+                    <span>{invoice.amounts.currency} {invoice.amounts.taxes.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Fees</span>
+                    <span>{invoice.amounts.currency} {invoice.amounts.fees.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-base font-bold mt-2">
+                    <span>Total Paid</span>
+                    <span>{invoice.amounts.currency} {invoice.amounts.total.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="mt-4 text-xs text-muted-foreground">
+                  <p>Thank you for choosing Premium Desert Safari Dubai.</p>
+                  <p>Keep a soft copy on your mobile; no print or hard copy needed.</p>
+                  <p className="mt-1">{invoice.business.website}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
